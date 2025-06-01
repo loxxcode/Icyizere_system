@@ -17,16 +17,13 @@ import {
   Grid,
   Alert,
   CircularProgress,
-  Tooltip,
   InputAdornment,
   Card,
   Chip,
   useTheme,
   alpha,
   Collapse,
-  useMediaQuery,
-  Divider,
-  FormHelperText  // Add this line
+  FormHelperText
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -35,10 +32,7 @@ import {
   Visibility as VisibilityIcon,
   FilterList as FilterListIcon,
   ShoppingCart as ShoppingCartIcon,
-  ArrowDropDown as ArrowDropDownIcon,
-  ArrowDropUp as ArrowDropUpIcon,
-  CalendarToday as CalendarTodayIcon,
-  LocalAtm as LocalAtmIcon
+  CalendarToday as CalendarTodayIcon
 } from '@mui/icons-material';
 import { useResponsive, responsiveStyles } from '../../styles/responsive';
 import ResponsiveTable from '../../components/tables/ResponsiveTable';
@@ -53,15 +47,11 @@ import {
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { formatCurrency } from '../../utils/formatters';
-import { useAuth } from '../../context/AuthContext';
 import moment from 'moment';
 
 const Sales = () => {
   const theme = useTheme();
-  const { isMobile, isSmallMobile, isTablet } = useResponsive();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  
-  const { currentUser } = useAuth();
+  const { isMobile, isSmallMobile } = useResponsive();
   const [stockOuts, setStockOuts] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -93,7 +83,7 @@ const Sales = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
   
   // Update sales stats whenever stockOuts change
   useEffect(() => {
@@ -210,7 +200,7 @@ const Sales = () => {
       const total = formik.values.quantity * formik.values.salePrice;
       formik.setFieldValue('totalAmount', total);
     }
-  }, [formik.values.quantity, formik.values.salePrice]);
+  }, [formik.values.quantity, formik.values.salePrice, formik]);
 
   // Set product's default sale price when product is selected
   useEffect(() => {
@@ -220,7 +210,7 @@ const Sales = () => {
         formik.setFieldValue('salePrice', selectedProduct.unitPrice);
       }
     }
-  }, [formik.values.product, products]);
+  }, [formik.values.product, products, formik]);
 
   const handleAddClick = () => {
     setDialogType('add');

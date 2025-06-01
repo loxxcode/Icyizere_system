@@ -170,26 +170,32 @@ export const responsiveStyles = {
     WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
     msOverflowStyle: '-ms-autohiding-scrollbar', // Better scroll handling on Windows
     scrollbarWidth: 'thin', // Firefox
+    width: '100%',
     '&::-webkit-scrollbar': {
       height: '4px',
       width: '4px',
     },
     '&::-webkit-scrollbar-track': {
       background: 'rgba(0, 0, 0, 0.1)',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: 8,
     },
     '&::-webkit-scrollbar-thumb': {
       background: 'rgba(255, 255, 255, 0.2)',
       borderRadius: '4px',
+      '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+      },
     },
   },
   
-  flexRow: {
+  flexRowResponsive: {
     display: 'flex',
     flexDirection: { xs: 'column', sm: 'row' },
   },
   
   // Touch-friendly buttons for mobile
-  touchFriendly: {
+  touchFriendlyButton: {
     minHeight: '44px',
     minWidth: '44px',
   },
@@ -201,31 +207,10 @@ export const responsiveStyles = {
     maxWidth: { xs: '100%', sm: '600px' },
   },
   
-  // Responsive table container with improved mobile support
-  tableContainer: {
-    width: '100%',
-    overflowX: 'auto',
-    WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
-    msOverflowStyle: 'none',  // Hide scrollbar in Edge/IE
-    scrollbarWidth: 'thin',   // Firefox scrollbar
-    '&::-webkit-scrollbar': {
-      height: 4,               // Smaller scrollbar for mobile
-    },
-    '&::-webkit-scrollbar-track': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      borderRadius: 8,
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-      borderRadius: 8,
-      '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-      },
-    },
-  },
+  // Responsive table container with improved mobile support - merged with above definition
   
   // Mobile table styles
-  mobileTable: {
+  mobileTableStyles: {
     '& th, & td': {
       padding: { xs: '8px 12px', sm: '12px 16px' },
       fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
@@ -233,7 +218,7 @@ export const responsiveStyles = {
   },
   
   // Card list view for mobile tables alternative
-  mobileCardList: {
+  mobileCardListView: {
     display: { xs: 'flex', md: 'none' },
     flexDirection: 'column',
     gap: 2,
@@ -286,8 +271,8 @@ export const responsiveStyles = {
     zIndex: 999,
   },
   
-  // Netflix-inspired mobile card
-  netflixMobileCard: {
+  // Netflix-inspired mobile card - enhanced version
+  netflixMobileCardEnhanced: {
     borderRadius: { xs: '8px', sm: '12px' },
     overflow: 'hidden',
     backgroundColor: 'rgba(20, 20, 20, 0.8)',
@@ -300,7 +285,7 @@ export const responsiveStyles = {
   },
   
   // Adjust content padding to avoid bottom navigation
-  safeAreaBottom: {
+  safeAreaBottomPadding: {
     paddingBottom: { xs: '72px', sm: '24px' },
   }
 };

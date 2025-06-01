@@ -6,8 +6,6 @@ import {
   Typography,
   CircularProgress,
   Alert,
-  Divider,
-  useTheme,
   IconButton,
   Tooltip,
   Table,
@@ -24,8 +22,6 @@ import {
   AttachMoney as MoneyIcon,
   Receipt as ReceiptIcon,
   ShoppingCart as CartIcon,
-  TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon,
   Refresh as RefreshIcon,
   ShowChart as ChartIcon,
   BarChart as BarChartIcon,
@@ -56,7 +52,7 @@ const SalesSummaryReport = ({
   isRefreshing: propIsRefreshing,
   onRefresh: propOnRefresh 
 }) => {
-  const theme = useTheme();
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reportData, setReportData] = useState({

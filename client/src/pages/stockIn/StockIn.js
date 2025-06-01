@@ -32,7 +32,6 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Visibility as VisibilityIcon,
-  Search as SearchIcon,
   FilterList as FilterListIcon
 } from '@mui/icons-material';
 import { 
@@ -46,11 +45,9 @@ import {
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { formatCurrency } from '../../utils/formatters';
-import { useAuth } from '../../context/AuthContext';
 import moment from 'moment';
 
 const StockIn = () => {
-  const { currentUser } = useAuth();
   const [stockIns, setStockIns] = useState([]);
   const [products, setProducts] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -75,7 +72,7 @@ const StockIn = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchData = async () => {
     try {
@@ -174,7 +171,7 @@ const StockIn = () => {
       const total = formik.values.quantity * formik.values.unitPrice;
       formik.setFieldValue('totalAmount', total);
     }
-  }, [formik.values.quantity, formik.values.unitPrice]);
+  }, [formik.values.quantity, formik.values.unitPrice, formik]);
 
   const handleAddClick = () => {
     setDialogType('add');

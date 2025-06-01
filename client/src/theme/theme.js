@@ -1,5 +1,4 @@
 import { createTheme } from '@mui/material/styles';
-import { red, green } from '@mui/material/colors';
 
 export const netflixColors = {
   red: '#E50914',

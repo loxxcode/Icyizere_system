@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import ProductSalesReport from './ProductSalesReport';
 import SalesSummaryReport from './SalesSummaryReport';
 import { Refresh as RefreshIcon, GetApp as DownloadIcon } from '@mui/icons-material';
@@ -40,7 +40,6 @@ const TabPanel = (props) => {
 };
 
 const Reports = () => {
-  const theme = useTheme();
   const [tabValue, setTabValue] = useState(0); // Default to Sales Summary tab
   const [dateRange, setDateRange] = useState({
     startDate: subDays(new Date(), 30),
@@ -76,7 +75,7 @@ const Reports = () => {
   const handleExport = useCallback(() => {
     // This would trigger export in the active report component
     showSnackbar('Export functionality will be implemented soon', 'info');
-  }, [tabValue]);
+  }, []);
 
   const showSnackbar = (message, severity = 'info') => {
     setSnackbar({
