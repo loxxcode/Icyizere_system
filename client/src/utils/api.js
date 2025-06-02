@@ -1,19 +1,18 @@
 import axios from 'axios';
 
-// Use simple API configuration with relative URLs
-// This will use the proxy setting in package.json in production
+// Direct API configuration for cross-domain calls
 
-// No base URL - will use relative URLs with the proxy
-axios.defaults.baseURL = '';
+// Explicitly set baseURL to the Railway backend
+axios.defaults.baseURL = 'https://icyizere-v2-production.up.railway.app';
 
 // Basic configuration
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
 
-// Don't use credentials for cross-origin to avoid CORS issues
+// Don't use credentials since we're using permissive CORS without credentials
 axios.defaults.withCredentials = false;
 
-console.log('API configured to use relative URLs with proxy from package.json');
+console.log('API configured to directly use Railway backend:', axios.defaults.baseURL);
 // Products API
 export const getProducts = async () => {
   const response = await axios.get('/api/products');
