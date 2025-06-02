@@ -12,29 +12,44 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// CORS configuration - THIS MUST COME BEFORE ANY ROUTE DEFINITIONS
-app.use((req, res, next) => {
-  // Set to the specific origin of your Vercel app
-  res.setHeader('Access-Control-Allow-Origin', 'https://icyizere-v2.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+// IMPORTANT: CORS configuration MUST come before any route definitions
+
+// First, disable Express's default CORS restriction
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Accept');
   
-  // Handle preflight requests
+  // Allow preflight requests to be handled quickly
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return res.status(200).send();
   }
-  
   next();
 });
 
-// Use cors middleware as a backup
+// Then, use the cors package with a permissive configuration
 app.use(cors({
-  origin: 'https://icyizere-v2.vercel.app',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: '*', // Allow all origins - we will narrow this later if needed
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Add specific CORS handling for the problematic routes
+app.options('/api/auth/login', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(200).end();
+});
+
+app.options('/api/auth/register', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(200).end();
+});
 app.use(express.json());
 app.use(morgan('dev'));
 
