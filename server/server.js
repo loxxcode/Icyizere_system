@@ -12,7 +12,22 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+// Configure CORS to accept requests from anywhere during development
+app.use(cors({
+  origin: '*', // Allow any origin temporarily for debugging
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Add a debug route to test API connectivity
+app.get('/api/debug', (req, res) => {
+  res.json({
+    message: 'API is working',
+    env: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
+  });
+});
 app.use(express.json());
 app.use(morgan('dev'));
 

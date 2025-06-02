@@ -78,8 +78,14 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (userData) => {
     try {
+      setLoading(true);
       setError(null);
-      const res = await axios.post('/api/auth/login', userData);
+      console.log('Attempting login with URL:', axios.defaults.baseURL + '/api/auth/login');
+      const res = await axios.post('/api/auth/login', userData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       
       // Save token to local storage
       localStorage.setItem('token', res.data.token);

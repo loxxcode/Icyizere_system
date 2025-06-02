@@ -1,4 +1,9 @@
 import axios from 'axios';
+
+// Configure axios defaults
+// Remove trailing slash from baseURL if present to avoid double slashes
+axios.defaults.baseURL = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
+axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
 // Products API
 export const getProducts = async () => {
   const response = await axios.get('/api/products');
