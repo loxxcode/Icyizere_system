@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -11,39 +10,12 @@ dotenv.config();
 // Initialize Express app
 const app = express();
 
-// Middleware
-// IMPORTANT: CORS configuration MUST come before any route definitions
+// IMPORTANT: Apply CORS middleware before any other middleware or routes
+// Use the dedicated CORS middleware
+const applyCorsMw = require('./middleware/cors');
+applyCorsMw(app);
 
-// Use the cors package with permissive configuration
-app.use(cors({
-  origin: ['https://icyizere-v2.vercel.app', 'http://localhost:3000'], // Specify allowed origins explicitly
-  credentials: true, // Allow cookies
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
-}));
-
-// Global middleware to ensure CORS headers are always set
-app.use((req, res, next) => {
-  // Set headers for all responses
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  next();
-});
-
-// Special handling for auth routes which might be causing issues
-app.options('*', (req, res) => {
-  // Respond to all OPTIONS requests with 200
-  res.status(200).end();
-});
+// Middleware configuration
 
 app.use(express.json());
 app.use(morgan('dev'));
