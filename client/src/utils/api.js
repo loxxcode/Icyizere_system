@@ -1,36 +1,19 @@
 import axios from 'axios';
 
-// Configure axios defaults with fallbacks for production
-let apiBaseUrl;
+// Use simple API configuration with relative URLs
+// This will use the proxy setting in package.json in production
 
-// For production, hardcode the Railway backend URL
-if (process.env.NODE_ENV === 'production') {
-  apiBaseUrl = 'https://icyizere-v2-production.up.railway.app';
-  console.log('Using production API URL:', apiBaseUrl);
-} else {
-  // For development, use environment variable or default to localhost
-  apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-  console.log('Using development API URL:', apiBaseUrl);
-}
+// No base URL - will use relative URLs with the proxy
+axios.defaults.baseURL = '';
 
-// Remove trailing slash if present
-axios.defaults.baseURL = apiBaseUrl.replace(/\/$/, '');
-
-// CORS configuration
-axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
-
-// Set default headers
+// Basic configuration
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
 
-// Add request interceptor to handle CORS
-axios.interceptors.request.use(function (config) {
-  // Don't send credentials for OPTIONS requests
-  if (config.method === 'options') {
-    config.withCredentials = false;
-  }
-  return config;
-});
+// Don't use credentials for cross-origin to avoid CORS issues
+axios.defaults.withCredentials = false;
+
+console.log('API configured to use relative URLs with proxy from package.json');
 // Products API
 export const getProducts = async () => {
   const response = await axios.get('/api/products');
