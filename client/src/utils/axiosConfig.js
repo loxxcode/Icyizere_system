@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Connect directly to Railway backend instead of using Vercel proxy
-// Since we've fixed CORS on the backend, we can connect directly
-const API_URL = 'https://icyizere-v2-production.up.railway.app';  // Railway backend URL
+// Use relative URL for API requests which will be proxied by Vercel
+// This will make requests go to the same domain as the frontend, avoiding CORS
+const API_URL = '';  // Empty string means same origin
 
 // Configure Axios
 const instance = axios.create({
@@ -49,12 +49,12 @@ instance.interceptors.response.use(
     
     // Only retry POST requests (like login) once
     if (error.message.includes('timeout') && originalRequest.method === 'post' && !originalRequest._retry) {
-      console.log('Request timed out. Retrying once with direct backend URL...');
+      console.log('Request timed out. Retrying once...');
       originalRequest._retry = true;
       
-      // Try direct connection to the backend as a fallback
-      originalRequest.baseURL = 'https://icyizere-v2-production.up.railway.app';
-      console.log(`Retrying with direct URL: ${originalRequest.baseURL}${originalRequest.url}`);
+      // Just retry with the same configuration
+      // This uses the relative URL which works with Vercel's proxy
+      console.log(`Retrying request: ${originalRequest.method.toUpperCase()} ${originalRequest.url}`);
       
       return instance(originalRequest);
     }
