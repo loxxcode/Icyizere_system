@@ -11,7 +11,6 @@ dotenv.config();
 const app = express();
 
 // IMPORTANT: Apply CORS middleware before any other middleware or routes
-// Use the dedicated CORS middleware
 const applyCorsMw = require('./middleware/cors');
 applyCorsMw(app);
 
@@ -27,7 +26,7 @@ const stockInRoutes = require('./routes/stockIn.routes');
 const stockOutRoutes = require('./routes/stockOut.routes');
 const reportRoutes = require('./routes/report.routes');
 
-// Routes middleware
+// Routes middleware - API routes come before static file handling
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/suppliers', supplierRoutes);
@@ -35,28 +34,16 @@ app.use('/api/stock-in', stockInRoutes);
 app.use('/api/stock-out', stockOutRoutes);
 app.use('/api/reports', reportRoutes);
 
-// Health check endpoint for Railway
+// Health check endpoint
 app.get('/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     db: dbStatus,
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
   });
-});
-
-// Error handling for uncaught exceptions and unhandled rejections
-process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION! Shutting down...');
-  console.error(err.name, err.message, err.stack);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (err) => {
-  console.error('UNHANDLED REJECTION! Shutting down...');
-  console.error(err.name, err.message, err.stack);
-  process.exit(1);
 });
 
 // MongoDB Connection
@@ -68,20 +55,20 @@ const connectDB = async () => {
     if (!mongoUri) {
       console.error('⚠️ WARNING: MongoDB Atlas connection string is not defined in environment variables');
       console.error('The server will continue running but database functionality will not work');
-      return false; // Return false to indicate connection failure but don't crash
+      return false;
     }
     
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-      family: 4 // Use IPv4, skip trying IPv6
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      family: 4
     });
     
     console.log('✅ MongoDB Atlas connected successfully');
     console.log(`📊 Using database: ${mongoose.connection.db.databaseName}`);
-    return true; // Connection successful
+    return true;
     
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
@@ -90,9 +77,8 @@ const connectDB = async () => {
     console.log('2. Your IP is whitelisted in MongoDB Atlas');
     console.log('3. Your MongoDB Atlas credentials in environment variables are correct');
     console.log('4. The database name in the connection string is correct');
-    // Don't exit process on connection error to allow debugging
     console.error('Full error details:', error);
-    return false; // Connection failed, but server should still run
+    return false;
   }
 };
 
@@ -108,12 +94,14 @@ const connectDB = async () => {
   }
 })();
 
-// Serve static assets in both production and development modes
+// Static file serving - AFTER API routes to avoid conflicts
 // For production, serve from build folder
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
-
-  app.get('*', (req, res) => {
+  
+  // Client-side routing support - this comes AFTER all API routes
+  app.get('/*', (req, res) => {
+    // Important: Use '/*' instead of '*' to be explicit about the pattern
     res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
   });
 } else {
@@ -121,17 +109,28 @@ if (process.env.NODE_ENV === 'production') {
   app.use('/assets', express.static(path.join(__dirname, '../client/public/assets')));
 }
 
-// Health check endpoint already defined above, removing duplicate
-
 // Port configuration
 const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   
-  // Check for all possible MongoDB URI variables
+  // Check for MongoDB URI variables
   const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DB_URI || process.env.DATABASE_URL;
   console.log(`MongoDB URI: ${mongoUri ? '****' + mongoUri.slice(-10) : 'NOT SET'}`);
+});
+
+// Error handling for uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION! Shutting down...');
+  console.error(err.name, err.message, err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! Shutting down...');
+  console.error(err.name, err.message, err.stack);
+  process.exit(1);
 });
 
 // Handle server errors
