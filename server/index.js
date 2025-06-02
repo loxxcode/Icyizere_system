@@ -51,7 +51,7 @@ app.options('*', (req, res) => {
 });
 
 // Port configuration
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Simple diagnostic server running on port ${PORT}`);
   console.log('Environment variables status:');
