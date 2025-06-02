@@ -12,21 +12,18 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Super permissive CORS - allow all origins
-app.use(cors());
+// Import and use dedicated CORS middleware
+const corsMiddleware = require('./middleware/cors.middleware');
+corsMiddleware(app);
 
-// Add permissive CORS headers to all responses
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  // Handle preflight OPTIONS requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
+// Add debug endpoint for testing CORS and connectivity
+app.get('/api/debug', (req, res) => {
+  res.json({
+    message: 'Debug endpoint reached successfully',
+    headers: req.headers,
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Add a debug route to test API connectivity
