@@ -15,7 +15,22 @@ if (process.env.NODE_ENV === 'production') {
 
 // Remove trailing slash if present
 axios.defaults.baseURL = apiBaseUrl.replace(/\/$/, '');
+
+// CORS configuration
 axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
+
+// Set default headers
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
+
+// Add request interceptor to handle CORS
+axios.interceptors.request.use(function (config) {
+  // Don't send credentials for OPTIONS requests
+  if (config.method === 'options') {
+    config.withCredentials = false;
+  }
+  return config;
+});
 // Products API
 export const getProducts = async () => {
   const response = await axios.get('/api/products');

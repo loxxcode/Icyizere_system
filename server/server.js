@@ -12,13 +12,28 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Configure CORS to accept requests from anywhere during development
+// Configure CORS to accept requests from the Vercel frontend
 app.use(cors({
-  origin: '*', // Allow any origin temporarily for debugging
+  origin: ['https://icyizere-v2.vercel.app', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Add CORS headers to all responses as a backup
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://icyizere-v2.vercel.app');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 // Add a debug route to test API connectivity
 app.get('/api/debug', (req, res) => {
