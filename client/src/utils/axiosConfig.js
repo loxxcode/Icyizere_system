@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Use relative URL for API requests which will be proxied by Vercel
-// This will make requests go to the same domain as the frontend, avoiding CORS
-const API_URL = '';  // Empty string means same origin
+// Connect directly to Railway backend instead of using Vercel proxy
+// Since we've fixed CORS on the backend, we can connect directly
+const API_URL = 'https://icyizere-v2-production.up.railway.app';  // Railway backend URL
 
 // Configure Axios
 const instance = axios.create({
