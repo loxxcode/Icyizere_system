@@ -69,6 +69,29 @@ app.use('/api/stock-in', stockInRoutes);
 app.use('/api/stock-out', stockOutRoutes);
 app.use('/api/reports', reportRoutes);
 
+// Error handling for uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION! Shutting down...');
+  console.error(err.name, err.message, err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! Shutting down...');
+  console.error(err.name, err.message, err.stack);
+  process.exit(1);
+});
+
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage()
+  });
+});
+
 // MongoDB Connection
 const connectDB = async () => {
   try {
@@ -81,11 +104,10 @@ const connectDB = async () => {
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      family: 4 // Use IPv4, skip trying IPv6
     });
     
     console.log('✅ MongoDB Atlas connected successfully');
-    
-    // Log the database name for confirmation
     console.log(`📊 Using database: ${mongoose.connection.db.databaseName}`);
     
   } catch (error) {
@@ -95,10 +117,12 @@ const connectDB = async () => {
     console.log('2. Your IP is whitelisted in MongoDB Atlas');
     console.log('3. Your MongoDB Atlas credentials in .env are correct');
     console.log('4. The database name in the connection string is correct');
-    process.exit(1);
+    // Don't exit process on connection error to allow debugging
+    console.error('Full error details:', error);
   }
 };
 
+// Execute the database connection
 connectDB();
 
 // Serve static assets in both production and development modes
@@ -116,8 +140,13 @@ if (process.env.NODE_ENV === 'production') {
 
 // Port configuration
 const PORT = process.env.PORT || 5000;
-
-// Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`MongoDB URI: ${process.env.MONGO_URI ? '****' + process.env.MONGO_URI.slice(-10) : 'NOT SET'}`);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  console.error('Server error:', err);
 });
