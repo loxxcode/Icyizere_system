@@ -12,28 +12,13 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Import and use dedicated CORS middleware
-const corsMiddleware = require('./middleware/cors.middleware');
-corsMiddleware(app);
-
-// Add debug endpoint for testing CORS and connectivity
-app.get('/api/debug', (req, res) => {
-  res.json({
-    message: 'Debug endpoint reached successfully',
-    headers: req.headers,
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
-
-// Add a debug route to test API connectivity
-app.get('/api/debug', (req, res) => {
-  res.json({
-    message: 'API is working',
-    env: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-  });
-});
+// CORS configuration to allow requests from Vercel frontend
+app.use(cors({
+  origin: ['https://icyizere-v2.vercel.app', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -85,13 +70,17 @@ const connectDB = async () => {
 
 connectDB();
 
-// Server static assets if in production
+// Serve static assets in both production and development modes
+// For production, serve from build folder
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
   });
+} else {
+  // For development, serve static files from client/public
+  app.use('/assets', express.static(path.join(__dirname, '../client/public/assets')));
 }
 
 // Port configuration
