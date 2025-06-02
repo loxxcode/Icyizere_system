@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
@@ -78,14 +78,8 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (userData) => {
     try {
-      setLoading(true);
       setError(null);
-      console.log('Attempting login with URL:', axios.defaults.baseURL + '/api/auth/login');
-      const res = await axios.post('/api/auth/login', userData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const res = await axios.post('/api/auth/login', userData);
       
       // Save token to local storage
       localStorage.setItem('token', res.data.token);
