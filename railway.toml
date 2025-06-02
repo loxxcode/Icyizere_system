@@ -1,7 +1,7 @@
 [services.backend]
 name = "backend"
-buildCommand = "cd server && npm install && npm run build"
-startCommand = "cd server && npm start"
+buildCommand = "cd server && npm install"
+startCommand = "cd server && node server.js"
 env = [
   "MONGO_URI",
   "JWT_SECRET",
