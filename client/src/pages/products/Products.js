@@ -17,7 +17,7 @@ import {
   Chip,
   Alert,
   CircularProgress,
-  Tooltip,
+
   useTheme,
   Grid,
   Card,
@@ -28,8 +28,7 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Warning as WarningIcon,
-  Inventory as InventoryIcon,
+
   Visibility as VisibilityIcon
 } from '@mui/icons-material';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../utils/api';

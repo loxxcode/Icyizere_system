@@ -12,8 +12,7 @@ import {
   Typography,
   useTheme,
   alpha,
-  Divider,
-  Chip
+  Divider
 } from '@mui/material';
 import { useResponsive, responsiveStyles } from '../../styles/responsive';
 import { formatCurrency } from '../../utils/formatters';
@@ -28,7 +27,7 @@ import { formatCurrency } from '../../utils/formatters';
  */
 const ResponsiveTable = ({ columns, rows, emptyMessage = 'No data available', isLoading = false }) => {
   const theme = useTheme();
-  const { isMobile, isSmallMobile } = useResponsive();
+  const { isMobile } = useResponsive();
   
   // If loading, render a placeholder
   if (isLoading) {

@@ -20,8 +20,7 @@ import {
   Tooltip,
   Card,
   CardContent,
-  Avatar,
-  Chip
+
 } from '@mui/material';
 import {
   ShoppingCart as ShoppingCartIcon,
@@ -30,9 +29,9 @@ import {
   GetApp as GetAppIcon,
   Refresh as RefreshIcon,
   TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon
+
 } from '@mui/icons-material';
-import { format } from 'date-fns';
+
 
 // Netflix-inspired color scheme
 const COLORS = {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
@@ -16,7 +16,7 @@ import { formatCurrency } from '../../utils/formatters';
 
 const ResponsiveExample = () => {
   const theme = useTheme();
-  const { isMobile, isSmallMobile } = useResponsive();
+  const { isSmallMobile } = useResponsive();
   
   // Sample data for the table
   const sampleProducts = [

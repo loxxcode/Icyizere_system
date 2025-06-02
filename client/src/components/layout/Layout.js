@@ -6,8 +6,6 @@ import {
   CssBaseline, 
   Divider, 
   IconButton, 
-  List, 
-  ListItem, 
   ListItemIcon, 
   ListItemText, 
   Toolbar, 
@@ -21,14 +19,12 @@ import {
   Badge,
   Button,
   Container,
-  useMediaQuery,
-  Stack
+  useMediaQuery
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
   Inventory as InventoryIcon,
   ShoppingCart as ShoppingCartIcon,
-  LocalShipping as LocalShippingIcon,
   People as PeopleIcon,
   BarChart as BarChartIcon,
   AccountCircle as AccountCircleIcon,
@@ -38,7 +34,7 @@ import {
   Menu as MenuIcon // Imported MenuIcon for mobile menu
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import { useResponsive, responsiveStyles } from '../../styles/responsive';
+import { responsiveStyles } from '../../styles/responsive';
 
 // Constants for layout
 const MOBILE_BREAKPOINT = 'md';

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { 
   ThemeProvider, 
@@ -16,7 +16,7 @@ import { AnimatePresence } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Theme
-import theme, { netflixColors } from './theme/theme';
+import { netflixColors } from './theme/theme';
 
 // Layout
 import Layout from './components/layout/Layout';

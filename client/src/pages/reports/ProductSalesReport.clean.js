@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Typography,
   Paper,
   Grid,
-  Divider,
+
   CircularProgress,
   Alert,
   Table,
@@ -16,8 +16,7 @@ import {
   TablePagination,
   TableSortLabel,
   Button,
-  IconButton,
-  Tooltip,
+
   Card,
   CardContent,
   Avatar,
@@ -32,7 +31,7 @@ import {
   TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon
 } from '@mui/icons-material';
-import { format } from 'date-fns';
+
 
 // Netflix-inspired color scheme
 const COLORS = {
@@ -61,7 +60,10 @@ const ProductSalesReport = ({
   const [orderBy, setOrderBy] = useState('revenue');
   const [order, setOrder] = useState('desc');
   const [products, setProducts] = useState([]);
+  // These state variables are defined for future implementation
+  // eslint-disable-next-line no-unused-vars
   const [dateRange, setDateRange] = useState(propDateRange);
+  // eslint-disable-next-line no-unused-vars
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalSold: 0,

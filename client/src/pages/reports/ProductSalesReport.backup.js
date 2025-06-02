@@ -60,14 +60,10 @@ const ProductSalesReport = ({
   const [localLoading, setLocalLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderBy, setOrderBy] = useState('revenue');
+  const [orderBy, setOrderBy] = useState('totalRevenue');
   const [order, setOrder] = useState('desc');
   const [products, setProducts] = useState([]);
   const [dateRange, setDateRange] = useState(propDateRange);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderBy, setOrderBy] = useState('totalRevenue');
-  const [order, setOrder] = useState('desc');
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalSold: 0,
@@ -500,6 +496,7 @@ const ProductSalesReport = ({
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
         <CircularProgress color="primary" />
       </Box>
+    );
   }
 };
   

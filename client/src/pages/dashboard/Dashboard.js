@@ -11,16 +11,11 @@ import {
   ListItemText,
   Divider,
   CircularProgress,
-  useTheme,
   alpha,
   Chip,
   LinearProgress,
-  IconButton,
-  Tooltip,
   Button,
-  Container,
-  Alert,
-  Skeleton,
+  useTheme,
 } from '@mui/material';
 import { 
   Inventory as InventoryIcon,
@@ -28,27 +23,22 @@ import {
   LocalAtm as LocalAtmIcon,
   TrendingUp as TrendingUpIcon,
   Warning as WarningIcon,
-  Visibility as VisibilityIcon,
-  StackedLineChart as StackedLineChartIcon,
-  ViewList as ViewListIcon,
   Refresh as RefreshIcon,
   ArrowUpward as ArrowUpwardIcon,
   ArrowDownward as ArrowDownwardIcon,
-  Info as InfoIcon,
-  PriceCheck as PriceCheckIcon,
 } from '@mui/icons-material';
 
 import moment from 'moment';
 import { getTodaySales, getLowStockProducts, getStockStatusReport } from '../../utils/api';
 
 import { useResponsive, responsiveStyles } from '../../styles/responsive';
-import { useAuth } from '../../context/AuthContext';
 import { formatCurrency } from '../../utils/formatters';
 
 const Dashboard = () => {
   const [todaySales, setTodaySales] = useState(null);
   const [lowStockProducts, setLowStockProducts] = useState(null);
   const [stockStatus, setStockStatus] = useState(null);
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -63,8 +53,7 @@ const Dashboard = () => {
   });
   
   // Responsive design hooks
-  const theme = useTheme();
-  const { isMobile, isSmallMobile, isTablet, isDesktop } = useResponsive();
+  const { isMobile } = useResponsive();
 
   const refreshDashboard = async () => {
     try {

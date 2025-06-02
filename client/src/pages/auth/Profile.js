@@ -29,11 +29,11 @@ const Profile = () => {
 
   useEffect(() => {
     if (currentUser) {
-      setUserData({
-        ...userData,
+      setUserData(prevData => ({
+        ...prevData,
         name: currentUser.name || '',
         email: currentUser.email || ''
-      });
+      }));
     }
   }, [currentUser]);
 
