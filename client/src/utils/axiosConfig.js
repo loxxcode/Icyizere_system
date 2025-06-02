@@ -1,14 +1,43 @@
 import axios from 'axios';
 
-// Configure Axios to use the Railway backend directly
+// Direct API URL (no proxy)
 const API_URL = 'https://icyizere-v2-production.up.railway.app';
-console.log('API configured to directly use Railway backend:', API_URL);
 
-// Set the base URL for all Axios requests
-axios.defaults.baseURL = API_URL;
+// Configure Axios
+const instance = axios.create({
+  baseURL: API_URL,
+  withCredentials: false, // Important for CORS
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    // Adding non-standard headers that might help bypass CORS restrictions
+    'X-Requested-With': 'XMLHttpRequest',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'  
+  }
+});
+
+// Log the configuration
+console.log('API configured with direct connection to:', API_URL);
+
+// Add a request interceptor to modify each request
+instance.interceptors.request.use(function (config) {
+  // Add a timestamp parameter to prevent caching issues
+  const timestamp = new Date().getTime();
+  
+  if (config.url.indexOf('?') !== -1) {
+    config.url = `${config.url}&_t=${timestamp}`;
+  } else {
+    config.url = `${config.url}?_t=${timestamp}`;
+  }
+  
+  return config;
+});
 
 // Add response interceptor to handle errors
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
@@ -22,4 +51,5 @@ axios.interceptors.response.use(
   }
 );
 
-export default axios;
+// Export our configured instance instead of the default axios
+export default instance;
