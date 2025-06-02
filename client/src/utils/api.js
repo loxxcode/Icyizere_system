@@ -1,8 +1,20 @@
 import axios from 'axios';
 
-// Configure axios defaults
-// Remove trailing slash from baseURL if present to avoid double slashes
-axios.defaults.baseURL = (process.env.REACT_APP_API_URL || '').replace(/\/$/, '');
+// Configure axios defaults with fallbacks for production
+let apiBaseUrl;
+
+// For production, hardcode the Railway backend URL
+if (process.env.NODE_ENV === 'production') {
+  apiBaseUrl = 'https://icyizere-v2-production.up.railway.app';
+  console.log('Using production API URL:', apiBaseUrl);
+} else {
+  // For development, use environment variable or default to localhost
+  apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  console.log('Using development API URL:', apiBaseUrl);
+}
+
+// Remove trailing slash if present
+axios.defaults.baseURL = apiBaseUrl.replace(/\/$/, '');
 axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
 // Products API
 export const getProducts = async () => {
