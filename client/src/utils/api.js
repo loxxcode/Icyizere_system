@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './axiosConfig';
 // Products API
 export const getProducts = async () => {
   const response = await axios.get('/api/products');
