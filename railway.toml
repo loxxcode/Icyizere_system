@@ -3,9 +3,11 @@ name = "backend"
 buildCommand = "cd server && npm install && npm run build"
 startCommand = "cd server && npm start"
 env = [
-  "MONGODB_URI",
+  "MONGO_URI",
   "JWT_SECRET",
-  "PORT"
+  "PORT",
+  "NODE_ENV",
+  "JWT_EXPIRE"
 ]
 
 [services.frontend]
@@ -17,7 +19,9 @@ env = [
 ]
 
 [env]
-MONGODB_URI = ""
-JWT_SECRET = ""
-PORT = "3001"
-NEXT_PUBLIC_API_URL = "http://localhost:3001"
+MONGO_URI = "mongodb+srv://diope2diope:3IpTZ6hGwXkEdgm7@cluster0.poyyb0c.mongodb.net/icyizere?retryWrites=true&w=majority"
+JWT_SECRET = "your_jwt_secret_key_here"
+JWT_EXPIRE = "30d"
+PORT = "5000"
+NODE_ENV = "production"
+NEXT_PUBLIC_API_URL = "https://icyizere-v2-production.up.railway.app"
