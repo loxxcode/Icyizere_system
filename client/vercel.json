@@ -9,6 +9,18 @@
             "destination": "/index.html"
         }
     ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "https://icyizere-v2-production.up.railway.app/api/$1",
+            "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Authorization"
+            }
+        }
+    ],
     "headers": [
         {
             "source": "/(.*)",

@@ -82,10 +82,31 @@ const Login = () => {
     
     try {
       setLoading(true);
-      await login({ email, password });
+      
+      // Using direct fetch API with CORS mode to bypass axios issues
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
+      }
+      
+      const data = await response.json();
+      
+      // Manually handle the login success
+      localStorage.setItem('token', data.token);
+      await login({ email, password }); // Still try the regular login for state updates
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      console.error('Login error:', err);
+      setError(err.message || 'Login failed. Please check your credentials or network connection.');
     } finally {
       setLoading(false);
     }
