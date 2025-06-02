@@ -62,11 +62,16 @@ app.get('/health', (req, res) => {
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    if (!process.env.MONGO_URI) {
-      throw new Error('MongoDB Atlas connection string (MONGO_URI) is not defined in .env file');
+    // Check for MongoDB URI in different environment variable names
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DB_URI || process.env.DATABASE_URL;
+    
+    if (!mongoUri) {
+      console.error('⚠️ WARNING: MongoDB Atlas connection string is not defined in environment variables');
+      console.error('The server will continue running but database functionality will not work');
+      return false; // Return false to indicate connection failure but don't crash
     }
     
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
@@ -76,21 +81,32 @@ const connectDB = async () => {
     
     console.log('✅ MongoDB Atlas connected successfully');
     console.log(`📊 Using database: ${mongoose.connection.db.databaseName}`);
+    return true; // Connection successful
     
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
     console.log('\nPlease make sure:');
     console.log('1. Your internet connection is stable');
     console.log('2. Your IP is whitelisted in MongoDB Atlas');
-    console.log('3. Your MongoDB Atlas credentials in .env are correct');
+    console.log('3. Your MongoDB Atlas credentials in environment variables are correct');
     console.log('4. The database name in the connection string is correct');
     // Don't exit process on connection error to allow debugging
     console.error('Full error details:', error);
+    return false; // Connection failed, but server should still run
   }
 };
 
-// Execute the database connection
-connectDB();
+// Execute the database connection, but don't block server startup
+(async () => {
+  try {
+    const success = await connectDB();
+    if (!success) {
+      console.warn('⚠️ Server started without database connection. Some functionality will be limited.');
+    }
+  } catch (err) {
+    console.error('Failed to connect to database, but server will continue running:', err.message);
+  }
+})();
 
 // Serve static assets in both production and development modes
 // For production, serve from build folder
@@ -105,12 +121,28 @@ if (process.env.NODE_ENV === 'production') {
   app.use('/assets', express.static(path.join(__dirname, '../client/public/assets')));
 }
 
+// Enhanced health check endpoint for Railway
+app.get('/health', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    database: dbStatus,
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Port configuration
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`MongoDB URI: ${process.env.MONGO_URI ? '****' + process.env.MONGO_URI.slice(-10) : 'NOT SET'}`);
+  
+  // Check for all possible MongoDB URI variables
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DB_URI || process.env.DATABASE_URL;
+  console.log(`MongoDB URI: ${mongoUri ? '****' + mongoUri.slice(-10) : 'NOT SET'}`);
 });
 
 // Handle server errors
