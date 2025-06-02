@@ -1,13 +1,23 @@
-[build]
-builder = "nixpacks"
-nixpacksAppDir = "server"
+[services.backend]
+name = "backend"
+buildCommand = "cd server && npm install && npm run build"
+startCommand = "cd server && npm start"
+env = [
+  "MONGODB_URI",
+  "JWT_SECRET",
+  "PORT"
+]
 
-[deploy]
-startCommand = "npm start"
-healthcheckPath = "/"
-healthcheckTimeout = 100
+[services.frontend]
+name = "frontend"
+buildCommand = "cd client && npm install && npm run build"
+startCommand = "cd client && npm start"
+env = [
+  "NEXT_PUBLIC_API_URL"
+]
 
 [env]
 MONGODB_URI = ""
 JWT_SECRET = ""
 PORT = "3001"
+NEXT_PUBLIC_API_URL = "http://localhost:3001"
