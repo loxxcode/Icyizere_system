@@ -8,7 +8,7 @@ const API_URL = '';  // Empty string means same origin
 const instance = axios.create({
   baseURL: API_URL,
   withCredentials: false, // Important for CORS
-  timeout: 10000,
+  timeout: 30000, // Increased timeout to 30 seconds
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -34,13 +34,31 @@ instance.interceptors.request.use(function (config) {
     config.url = `${config.url}?_t=${timestamp}`;
   }
   
+  console.log(`Making request to: ${config.method.toUpperCase()} ${config.baseURL}${config.url}`);
   return config;
 });
 
-// Add response interceptor to handle errors
+// Add response interceptor to handle errors and retry logic
 instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (response) => {
+    console.log(`Response received from ${response.config.url}:`, response.status);
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // Only retry POST requests (like login) once
+    if (error.message.includes('timeout') && originalRequest.method === 'post' && !originalRequest._retry) {
+      console.log('Request timed out. Retrying once with direct backend URL...');
+      originalRequest._retry = true;
+      
+      // Try direct connection to the backend as a fallback
+      originalRequest.baseURL = 'https://icyizere-v2-production.up.railway.app';
+      console.log(`Retrying with direct URL: ${originalRequest.baseURL}${originalRequest.url}`);
+      
+      return instance(originalRequest);
+    }
+    
     if (error.response) {
       console.error('API Error:', error.response.status, error.response.data);
     } else if (error.request) {
