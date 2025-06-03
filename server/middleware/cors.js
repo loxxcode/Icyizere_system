@@ -5,6 +5,7 @@ const cors = require('cors');
 const allowedOrigins = [
   'https://icyizere-v2.vercel.app',
   'http://localhost:3000',
+  'http://localhost:5000',
   // Add any other origins as needed
 ];
 
